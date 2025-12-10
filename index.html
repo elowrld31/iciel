@@ -1,118 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Brad Bitt — Hub officiel</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Press+Start+2P&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brad Bitt Hub</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="brand">
-        <div class="logo" aria-hidden>BB</div>
-        <div class="brand-text">
-          <div class="title">Brad Bitt</div>
-          <div class="subtitle">mais le site</div>
+
+    <header>
+        <h1>Brad Bitt Hub</h1>
+        <button id="themeToggle">🎨</button>
+    </header>
+
+    <section class="badge-section">
+        <div class="badge">
+            <img src="badge.png" alt="Badge Officiel">
+            <p>Badge Officiel<br>Brad Bitt</p>
         </div>
-      </div>
-
-      <nav class="mini-nav" aria-label="Navigation secondaire">
-        <button class="nav-item" data-panel="news">Nouveautés <span class="badge" id="news-badge">1</span></button>
-        <button class="nav-item" data-panel="contact">Contact</button>
-        <button class="nav-item external" data-external="https://example-don.com">Don <span class="don-arrow">↗</span></button>
-        <button id="theme-toggle" class="nav-item" title="Basculer thème">🌓</button>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero container reveal">
-      <h1>Bienvenue sur le site</h1>
-      <p class="hero-lead">Regroupe les jeux, les épisodes et les coulisses de Brad Bitt.</p>
-
-      <button class="oval-btn" id="oval-learn" aria-controls="panel-welcome">En savoir plus</button>
     </section>
 
-    <section class="content container">
-      <article class="card reveal" id="game">
-        <h2>Brad Bitt — Le jeu</h2>
-        <p>Présentation du projet, inspirations et teasers. Aperçu du gameplay, sprites et mécanique.</p>
-        <div class="card-actions">
-          <button class="btn" data-panel="game">Découvrir</button>
+    <section class="cards">
+        <div class="card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <h2>Filmographie</h2>
+                </div>
+                <div class="card-back">
+                    <a href="films.html">Voir ➜</a>
+                </div>
+            </div>
         </div>
-      </article>
 
-      <article class="card reveal" id="episodes">
-        <h2>Les aventures de Bitt</h2>
-        <p>Mini-série d'introduction : épisodes, synopsis et teasers.</p>
-        <div class="ep-grid" id="ep-grid">
-          <div class="ep-card" tabindex="0" data-episode="1">
-            <div class="ep-front"><strong>Épisode 1</strong><span>Prologue</span></div>
-            <div class="ep-back"><p>La soirée — Brad se rend à une soirée où tout bascule...</p><button class="btn small" data-panel="ep1">Voir</button></div>
-          </div>
-
-          <div class="ep-card" tabindex="0" data-episode="2">
-            <div class="ep-front"><strong>Épisode 2</strong><span>Changement de programme</span></div>
-            <div class="ep-back"><p>Brad entre dans une forêt mystérieuse et se retrouve malgré lui au cœur d’un événement étrange.</p><button class="btn small" data-panel="ep2">Voir</button></div>
-          </div>
-
-          <div class="ep-card" tabindex="0" data-episode="3">
-            <div class="ep-front"><strong>Épisode 3</strong><span>Retard</span></div>
-            <div class="ep-back"><p>Brad découvre une salle étrange qui le mènera vers autre chose... À venir.</p></div>
-          </div>
+        <div class="card external" data-url="https://example.com">
+            <div class="card-inner">
+                <div class="card-front">
+                    <h2>Fan Club</h2>
+                </div>
+                <div class="card-back">
+                    <span>→</span>
+                </div>
+            </div>
         </div>
-      </article>
 
-      <article class="card reveal" id="music">
-        <h2>Musiques</h2>
-        <p>Prochainement : bandes-son & ambiances.</p>
-        <div class="card-actions">
-          <button class="btn disabled" aria-disabled="true">Prochainement</button>
+        <div class="card">
+            <div class="card-inner">
+                <div class="card-front">
+                    <h2>Galerie</h2>
+                </div>
+                <div class="card-back">
+                    <a href="galerie.html">Ouvrir ➜</a>
+                </div>
+            </div>
         </div>
-      </article>
-
-      <article class="card reveal" id="lore">
-        <h2>L'histoire de Bitt</h2>
-        <p>Le lore, la chronologie et les textes explicatifs de l'univers.</p>
-        <div class="card-actions">
-          <button class="btn" data-panel="lore">En savoir plus</button>
-        </div>
-      </article>
     </section>
-  </main>
 
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="left">Version 1.0.4</div>
-      <div class="right">IMAGINe Studio &amp; Engine HwR</div>
+    <div id="externalWarning" class="hidden">
+        <div class="modal">
+            <p>Vous allez quitter le site officiel Brad Bitt Hub. Continuer ?</p>
+            <button id="continue">Continuer</button>
+            <button id="cancel">Annuler</button>
+        </div>
     </div>
-  </footer>
 
-  <!-- Overlays / panels -->
-  <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
-    <div class="overlay-inner" id="overlay-inner" tabindex="-1">
-      <button class="close" id="overlay-close" aria-label="Fermer">✕</button>
-      <div id="overlay-content"></div>
-    </div>
-  </div>
-
-  <!-- External link warning -->
-  <div id="external-warn" class="overlay hidden" role="dialog" aria-modal="true">
-    <div class="overlay-inner">
-      <button class="close" id="warn-close" aria-label="Fermer">✕</button>
-      <h3>Vous allez quitter le site</h3>
-      <p id="warn-msg">En cliquant sur continuer, vous quitterez bradbitt.example pour aller vers :</p>
-      <div class="warn-actions">
-        <button class="btn" id="warn-cont">Continuer</button>
-        <button class="btn" id="warn-cancel">Annuler</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="script.js" defer></script>
+    <script src="script.js"></script>
 </body>
 </html>
