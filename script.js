@@ -44,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function openPanel(key) {
     overlayContent.innerHTML = PANELS[key] || `<p>Contenu à venir</p>`;
     overlay.classList.remove('hidden');
-    overlayInner.focus();
+    // small delay to ensure focusable
+    setTimeout(() => overlayInner.focus(), 50);
     document.body.style.overflow = 'hidden';
   }
   function closePanel() {
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // oval hero
   $('#oval-learn').addEventListener('click', () => openPanel('welcome'));
 
-  // ep-card flip: on mobile toggle .flipped; on desktop hover is CSS
+  // ep-card flip: on mobile toggle .flipped; on desktop hover removed to avoid hover-bug — flip only via class (click)
   $$('.ep-card').forEach(card => {
     card.addEventListener('click', (e) => {
       // toggle flip on tap/click (useful for mobile)
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     overlayContent.innerHTML = content;
     overlay.classList.remove('hidden');
-    overlayInner.focus();
+    setTimeout(() => overlayInner.focus(), 60);
     document.body.style.overflow = 'hidden';
   }
 
@@ -159,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
       themeToggle.title = 'Mode : clair';
     } else if (pref === 'dark') {
       htmlRoot.removeAttribute('data-theme');
-      // dark is default base variables; keep no data-theme or set another if desired
       themeToggle.title = 'Mode : sombre';
     } else {
       // auto: follow system
@@ -172,9 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderThemeIcons(pref) {
-    // show icons subtle differences via CSS classes
-    // (we keep both icons visible — color is handled by CSS)
     themeToggle.dataset.mode = pref;
+    // For accessibility: update aria-label
+    themeToggle.setAttribute('aria-label', `Mode thème : ${pref}`);
   }
 
   // init: determine pref
@@ -208,8 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* accessibility: trap focus naive for overlay (basic) */
   overlay.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
-      // naive: ensure focus stays in overlay-inner
-      // for full trap use a small focus management implementation
+      // naive: keep subtle focus inside overlay-inner
       const focusable = overlayInner.querySelectorAll('button, a, input, [tabindex]:not([tabindex="-1"])');
       if (focusable.length) {
         focusable[0].focus();
@@ -233,12 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* small: when opening news via nav button toggle seen */
   btnNews.addEventListener('click', () => {
-    // mark seen and show with date
     markNewsSeen();
     showNewsPanel();
   });
 
   // final: small UX improvement — clicking outside overlay closes handled above
-  // make ep-card keyboard accessible already handled
 
 });
