@@ -1,41 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const $ = s => document.querySelector(s);
-  const $$ = s => [...document.querySelectorAll(s)];
 
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+  /* ---------------------------
+     OVERLAY PRINCIPAL
+  --------------------------- */
   const overlay = $('#overlay');
   const overlayInner = $('#overlay-inner');
   const overlayContent = $('#overlay-content');
   const overlayClose = $('#overlay-close');
 
-  const warn = $('#external-warn');
-  const warnMsg = $('#warn-msg');
-  const warnClose = $('#warn-close');
-  const warnCont = $('#warn-cont');
-  const warnCancel = $('#warn-cancel');
-  let warnTarget = null;
-
-  const newsBadge = $('#news-badge');
-  const btnNews = $('#btn-news');
-
-  const THEME_KEY = 'brad_theme_pref';
-  const NEWS_KEY = 'brad_news_seen';
-
-  const PANELS = {
-    welcome: `<h2>Bienvenue</h2><p>Ce site centralise tout l'univers de Brad Bitt.</p>`,
-    game: `<h2>Brad Bitt — Le jeu</h2><p>Présentation du projet, inspirations et mécaniques.</p>`,
-    lore: `<h2>L'histoire de Bitt</h2><p>Chronologie et lore de l’univers.</p>`,
-    ep1: `<h2>Épisode 1 — La soirée</h2>`,
-    ep2: `<h2>Épisode 2 — Changement de programme</h2>`,
-    ep3: `<h2>Épisode 3 — Retard</h2>`,
-    contact: `<h2>Contact</h2><p>contact (at) bradbitt.example</p>`,
-    news: `<h2>Nouveautés</h2><p>Optimisations et corrections récentes.</p>`
-  };
-
   function openPanel(key) {
-    overlayContent.innerHTML = PANELS[key] || '<p>Contenu à venir</p>';
+    overlayContent.innerHTML = PANELS[key] || `<p>Contenu à venir.</p>`;
     overlay.classList.remove('hidden');
-    setTimeout(() => overlayInner.focus(), 40);
     document.body.style.overflow = 'hidden';
+    setTimeout(() => overlayInner.focus(), 50);
   }
 
   function closePanel() {
@@ -48,23 +28,65 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === overlay) closePanel();
   });
 
+  /* ---------------------------
+     PANELS
+  --------------------------- */
+  const PANELS = {
+    welcome: `
+      <h2>Bienvenue</h2>
+      <p>Ce site centralise tout l’univers de Brad Bitt : jeu, épisodes, musiques et lore.</p>
+    `,
+    game: `
+      <h2>Brad Bitt — Le jeu</h2>
+      <p>
+        Brad Bitt est un jeu narratif mêlant exploration, énigmes et narration visuelle.
+        Le joueur incarne Brad dans un univers étrange, entre réalité et fiction.
+      </p>
+      <p>
+        Le projet s’appuie sur une direction artistique forte et une IA utilisée uniquement
+        comme outil d’assistance créative (aide à l’idéation, pas de génération brute de contenu final).
+      </p>
+    `,
+    lore: `
+      <h2>L’histoire de Bitt</h2>
+      <p>
+        Découvrez le lore, la chronologie et les inspirations de l’univers Brad Bitt.
+      </p>
+    `,
+    contact: `
+      <h2>Contact</h2>
+      <p>contact (at) bradbitt.example</p>
+    `,
+    news: `
+      <h2>Nouveautés</h2>
+      <p>Corrections visuelles, améliorations mobile et stabilité générale du site.</p>
+    `,
+    ep1: `<h2>Épisode 1 — La soirée</h2><p>Brad se rend à une soirée…</p>`,
+    ep2: `<h2>Épisode 2 — Changement de programme</h2><p>Une forêt, une disparition.</p>`,
+    ep3: `<h2>Épisode 3 — Retard</h2><p>La suite arrive bientôt.</p>`
+  };
+
+  /* ---------------------------
+     BOUTONS → PANELS
+  --------------------------- */
   $$('[data-panel]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const key = btn.dataset.panel;
-      if (key === 'news') {
-        localStorage.setItem(NEWS_KEY, new Date().toISOString());
-        newsBadge.style.display = 'none';
-      }
-      openPanel(key);
+      openPanel(btn.dataset.panel);
     });
   });
 
-  $('#oval-learn').addEventListener('click', () => openPanel('welcome'));
+  $('#oval-learn')?.addEventListener('click', () => {
+    openPanel('welcome');
+  });
 
+  /* ---------------------------
+     CARTES ÉPISODES (FLIP AU CLIC)
+  --------------------------- */
   $$('.ep-card').forEach(card => {
     card.addEventListener('click', () => {
       card.classList.toggle('flipped');
     });
+
     card.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -73,11 +95,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  $$('.mini-nav .external').forEach(btn => {
+  /* ---------------------------
+     LIEN EXTERNE (DON)
+  --------------------------- */
+  const warn = $('#external-warn');
+  const warnMsg = $('#warn-msg');
+  const warnClose = $('#warn-close');
+  const warnCancel = $('#warn-cancel');
+  const warnCont = $('#warn-cont');
+  let warnTarget = null;
+
+  $$('.external').forEach(btn => {
     btn.addEventListener('click', e => {
       e.preventDefault();
       warnTarget = btn.dataset.external;
-      warnMsg.textContent = `Vous allez quitter le site pour : ${warnTarget}`;
+      warnMsg.textContent = `Vous allez être redirigé vers : ${warnTarget}`;
       warn.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     });
@@ -96,23 +128,53 @@ document.addEventListener('DOMContentLoaded', () => {
     closeWarn();
   });
 
-  const themeToggle = $('#theme-toggle');
-  let themePref = localStorage.getItem(THEME_KEY) || 'auto';
+  /* ---------------------------
+     BADGE NOUVEAUTÉS
+  --------------------------- */
+  const NEWS_KEY = 'brad_news_seen';
+  const newsBadge = $('#news-badge');
+  const btnNews = $('#btn-news');
 
-  function applyTheme(pref) {
-    const root = document.documentElement;
-    if (pref === 'light') root.setAttribute('data-theme', 'light');
-    else root.removeAttribute('data-theme');
+  function renderBadge() {
+    if (localStorage.getItem(NEWS_KEY)) {
+      newsBadge.style.display = 'none';
+    }
   }
 
-  applyTheme(themePref);
-
-  themeToggle.addEventListener('click', () => {
-    themePref = themePref === 'auto' ? 'light' : themePref === 'light' ? 'dark' : 'auto';
-    localStorage.setItem(THEME_KEY, themePref);
-    applyTheme(themePref);
+  btnNews.addEventListener('click', () => {
+    localStorage.setItem(NEWS_KEY, 'true');
+    renderBadge();
   });
 
+  renderBadge();
+
+  /* ---------------------------
+     THEME TOGGLE (IDENTIQUE)
+  --------------------------- */
+  const THEME_KEY = 'brad_theme_pref';
+  const themeToggle = $('#theme-toggle');
+  const html = document.documentElement;
+
+  function applyTheme(pref) {
+    if (pref === 'light') {
+      html.setAttribute('data-theme', 'light');
+    } else {
+      html.removeAttribute('data-theme');
+    }
+  }
+
+  let theme = localStorage.getItem(THEME_KEY) || 'dark';
+  applyTheme(theme);
+
+  themeToggle.addEventListener('click', () => {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem(THEME_KEY, theme);
+    applyTheme(theme);
+  });
+
+  /* ---------------------------
+     ESC → FERMER
+  --------------------------- */
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       if (!overlay.classList.contains('hidden')) closePanel();
@@ -120,7 +182,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  if (localStorage.getItem(NEWS_KEY)) {
-    newsBadge.style.display = 'none';
-  }
 });
