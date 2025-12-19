@@ -12,7 +12,7 @@
 }
 
 /* Light theme overrides */
-:root[data-theme="light"]{
+:root[data-theme="light"] body{
   --bg:#f6f7fb;
   --card:#ffffff;
   --muted:#58606b;
