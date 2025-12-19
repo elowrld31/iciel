@@ -7,6 +7,7 @@
 
 /* Light theme overrides (will be toggled with [data-theme="light"] on <html>) */
 :root[data-theme="light"] body{
+  background: linear-gradient(180deg,#f7f9fc 0%, #eef2f6 50%);
   --bg: #f6f7fb;
   --card: #ffffff;
   --muted: #58606b;
