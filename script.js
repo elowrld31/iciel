@@ -5,6 +5,39 @@ document.addEventListener('DOMContentLoaded', () => {
   // helpers
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
+  function bindHomeInteractions() {
+  // data-panel buttons
+  $$('[data-panel]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const k = btn.getAttribute('data-panel');
+      if (k === 'news') { markNewsSeen(); showNewsPanel(); }
+      else openPanel(k);
+    });
+  });
+
+  // ep-card flip
+  $$('.ep-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.classList.toggle('flipped');
+      }
+    });
+  });
+
+  // discover button
+  const discoverBtn = document.querySelector('#btn-discover');
+  if (discoverBtn) {
+    discoverBtn.addEventListener('click', () => {
+      main.innerHTML = GAME_PAGE;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      observeReveals();
+    });
+  }
+}
     /* ---------------------------
      SPA-like main swap (Game page)
      --------------------------- */
@@ -111,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
     /* Game page override */
-  const discoverBtn = document.querySelector('#game .btn');
+ const discoverBtn = document.querySelector('#btn-discover');
 
   if (discoverBtn) {
     discoverBtn.addEventListener('click', () => {
@@ -279,14 +312,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* reveal elements that are in view */
-  const reveals = $$('.reveal');
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(en => {
-      if (en.isIntersecting) en.target.classList.add('visible');
-      else en.target.classList.remove('visible');
-    });
-  }, { threshold: 0.12 });
-  reveals.forEach(r => io.observe(r));
+/* reveal observer */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(en => {
+    if (en.isIntersecting) en.target.classList.add('visible');
+    else en.target.classList.remove('visible');
+  });
+}, { threshold: 0.12 });
+
+function observeReveals() {
+  document.querySelectorAll('.reveal').forEach(el => {
+    el.classList.remove('visible');
+    io.observe(el);
+  });
+}
 
   /* ensure news badge initial render (in case stored) */
   renderNewsBadge();
@@ -297,18 +336,20 @@ document.addEventListener('DOMContentLoaded', () => {
     showNewsPanel();
   });
   /* Logo = retour accueil */
-  const logo = document.querySelector('.brand');
+ /* Logo = retour accueil */
+const logo = document.querySelector('.brand');
 
-  logo.addEventListener('click', () => {
-    main.innerHTML = homeHTML;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+logo.addEventListener('click', () => {
+  main.innerHTML = homeHTML;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    document.querySelectorAll('.reveal').forEach(el => {
-      el.classList.remove('visible');
-      io.observe(el);
-    });
-  });
-  
+  // 🔧 REBRANCHER LES INTERACTIONS PERDUES
+  bindHomeInteractions();
+
+  // 🔧 RELANCER LES ANIMATIONS reveal
+  observeReveals();
+});
+
   // final: small UX improvement — clicking outside overlay closes handled above
 
 });
