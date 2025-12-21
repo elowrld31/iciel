@@ -100,7 +100,7 @@ html,body{height:100%;margin:0;background:
 .ep-card.flipped{transform:rotateY(180deg)}
 
 /* important: remove auto-hover flip (prevents hover bugs). flip only via .flipped class (click/tap) */
-/* previously we had .ep-card:hover transform — removed to avoid bug on some devices */
+/* previously we had .ep-card:hover transform â€” removed to avoid bug on some devices */
 
 /* buttons */
 .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:var(--text);cursor:pointer;font-weight:700}
