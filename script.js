@@ -82,7 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ep2: `<h2>Ã‰pisode 2 â€” Changement de programme</h2><p>Brad entre dans une forÃªt Ã©trange et disparaÃ®t dans un mystÃ¨re croissant.</p>`,
     ep3: `<h2>Ã‰pisode 3 â€” Retard</h2><p>Brad dÃ©couvre une salle mystÃ©rieuse... la suite vous attend.</p>`,
     contact: `<h2>Contact</h2><p>Pour un message : contact (at) bradbitt.example</p>`,
-    news: `<h2>NouveautÃ©s</h2><div id="news-content"><p>Optimisation mobile â€” corrections de transitions menu â†’ jeu.</p></div>`
+  news: `<h2>Nouveautés</h2>
+<div id="news-content">
+  <p>Optimisation mobile — corrections de transitions menu → jeu.</p>
+</div>`
   };
 
   /* ---------------------------
