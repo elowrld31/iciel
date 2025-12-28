@@ -22,16 +22,25 @@
       </div>
 
       <nav class="mini-nav" aria-label="Navigation secondaire">
-        <button class="nav-item" data-panel="news" id="btn-news">
-          Nouveautés <span class="badge" id="news-badge">1</span>
-        </button>
-        <button class="nav-item" data-panel="contact">Contact</button>
+        <button class="nav-item" data-panel="news" id="btn-news">Nouveautés <span class="badge" id="news-badge">1</span></button>
 
-        <button id="theme-toggle" class="theme-toggle" aria-label="Changer le thème">
-          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18">
+        <button id="theme-toggle" class="theme-toggle" aria-label="Changer le thème" title="Mode : automatique">
+          <!-- SVG icons (minimal) -->
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <circle cx="12" cy="12" r="4" fill="currentColor"></circle>
+            <g stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+              <line x1="12" y1="2" x2="12" y2="4"></line>
+              <line x1="12" y1="20" x2="12" y2="22"></line>
+              <line x1="2" y1="12" x2="4" y2="12"></line>
+              <line x1="20" y1="12" x2="22" y2="12"></line>
+              <line x1="4.5" y1="4.5" x2="6" y2="6"></line>
+              <line x1="18" y1="18" x2="19.5" y2="19.5"></line>
+              <line x1="4.5" y1="19.5" x2="6" y2="18"></line>
+              <line x1="18" y1="6" x2="19.5" y2="4.5"></line>
+            </g>
           </svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18">
+
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <path fill="currentColor" d="M21 12.8A9 9 0 0111.2 3 7 7 0 0021 12.8z"></path>
           </svg>
         </button>
@@ -42,10 +51,9 @@
   <main id="app-main">
     <section class="hero container reveal">
       <h1>Bienvenue sur le site</h1>
-      <p class="hero-lead">
-        Regroupe les jeux, les épisodes et les coulisses de Brad Bitt.
-      </p>
-      <button class="oval-btn" id="oval-learn">En savoir plus</button>
+      <p class="hero-lead">Regroupe les jeux, les épisodes et les coulisses de Brad Bitt.</p>
+
+      <button class="oval-btn" id="oval-learn" aria-controls="panel-welcome">En savoir plus</button>
     </section>
 
     <section class="content container">
@@ -53,38 +61,35 @@
         <div class="card-inner">
           <div class="card-top">
             <h2>Brad Bitt — Le jeu</h2>
-            <p>
-              Présentation du projet, inspirations et teasers.
-            </p>
+            <p>Présentation du projet, inspirations et teasers. Aperçu du gameplay, sprites et mécanique.</p>
           </div>
           <div class="card-actions">
-            <button class="btn" id="btn-discover">Découvrir</button>
-            <a class="btn" href="https://www.canva.com/" target="_blank" rel="noopener">
-              Présentation
-            </a>
-          </div>
-        </div>
-      </article>
+  <button class="btn" id="btn-discover">Découvrir</button>
+  <a class="btn" href="LIEN_CANVA_ICI" target="_blank" rel="noopener">
+    Présentation
+  </a>
+</div>
 
       <article class="card reveal" id="episodes">
         <div class="card-inner">
           <div class="card-top">
             <h2>Les aventures de Bitt</h2>
-            <p>Mini-série d'introduction.</p>
+            <p>Mini-série d'introduction : épisodes, synopsis et teasers.</p>
           </div>
 
-          <div class="ep-grid">
-            <div class="ep-card" tabindex="0" data-panel="ep1">
+          <div class="ep-grid" id="ep-grid" aria-hidden="false">
+            <!-- Episodes cards -->
+            <div class="ep-card" tabindex="0" data-episode="1">
               <div class="ep-front"><strong>Épisode 1</strong><span>La soirée</span></div>
-              <div class="ep-back"><p>Début du mystère.</p></div>
+              <div class="ep-back"><p>Brad se rend à une soirée — début du mystère.</p><button class="btn small" data-panel="ep1">Voir</button></div>
             </div>
-            <div class="ep-card" tabindex="0" data-panel="ep2">
-              <div class="ep-front"><strong>Épisode 2</strong><span>Forêt</span></div>
-              <div class="ep-back"><p>Disparition étrange.</p></div>
+            <div class="ep-card" tabindex="0" data-episode="2">
+              <div class="ep-front"><strong>Épisode 2</strong><span>Changement de programme</span></div>
+              <div class="ep-back"><p>Brad entre dans une forêt étrange et disparaît.</p><button class="btn small" data-panel="ep2">Voir</button></div>
             </div>
-            <div class="ep-card" tabindex="0" data-panel="ep3">
+            <div class="ep-card" tabindex="0" data-episode="3">
               <div class="ep-front"><strong>Épisode 3</strong><span>Retard</span></div>
-              <div class="ep-back"><p>À suivre…</p></div>
+              <div class="ep-back"><p>Brad découvre une salle mystérieuse... (à suivre)</p><button class="btn small" data-panel="ep3">Voir</button></div>
             </div>
           </div>
         </div>
@@ -92,17 +97,25 @@
 
       <article class="card reveal" id="music">
         <div class="card-inner">
-          <h2>Musiques</h2>
-          <video controls width="100%">
-            <source src="video.mp4" type="video/mp4">
-          </video>
+          <div class="card-top">
+            <h2>Musiques</h2>
+            <p>Prochainement : bandes-son & ambiances.</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn disabled" aria-disabled="true">Prochainement</button>
+          </div>
         </div>
       </article>
 
       <article class="card reveal" id="lore">
         <div class="card-inner">
-          <h2>L’histoire de Bitt</h2>
-          <button class="btn disabled">Prochainement</button>
+          <div class="card-top">
+            <h2>L'histoire de Bitt</h2>
+            <p>Le lore, la chronologie et les textes explicatifs de l'univers.</p>
+          </div>
+          <div class="card-actions">
+           <button class="btn disabled" aria-disabled="true">Prochainement</button>
+          </div>
         </div>
       </article>
     </section>
@@ -111,14 +124,28 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div class="left">Version 1.0</div>
-      <div class="right">IMAGINe Studio</div>
+      <div class="right">IMAGINe Studio &amp; Engine HwR</div>
     </div>
   </footer>
 
-  <div id="overlay" class="overlay hidden">
+  <!-- Overlays / panels -->
+  <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="overlay-inner" id="overlay-inner" tabindex="-1" role="document">
+      <button class="close" id="overlay-close" aria-label="Fermer">✕</button>
+      <div id="overlay-content" class="overlay-content" tabindex="0"></div>
+    </div>
+  </div>
+
+  <!-- External link warning -->
+  <div id="external-warn" class="overlay hidden" role="dialog" aria-modal="true">
     <div class="overlay-inner">
-      <button class="close" id="overlay-close">✕</button>
-      <div id="overlay-content"></div>
+      <button class="close" id="warn-close" aria-label="Fermer">✕</button>
+      <h3>Vous allez quitter le site</h3>
+      <p id="warn-msg">En cliquant sur continuer, vous quitterez le site pour aller vers :</p>
+      <div class="warn-actions">
+        <button class="btn" id="warn-cont">Continuer</button>
+        <button class="btn" id="warn-cancel">Annuler</button>
+      </div>
     </div>
   </div>
 
