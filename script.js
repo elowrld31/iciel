@@ -1,272 +1,147 @@
-// script.js
-// Hub site logic: overlays, news badge persistence, theme toggle, ep-card interactions.
+// script.js — gestion badge / thèmes / overlays / ep-cards / lecteur vidéo
 
 document.addEventListener('DOMContentLoaded', () => {
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
 
-  const main = document.getElementById('app-main');
-  const homeHTML = main ? main.innerHTML : '';
+  const overlay = $('#overlay');
+  const overlayInner = $('#overlay-inner');
+  const overlayContent = $('#overlay-content');
+  const overlayClose = $('#overlay-close');
 
-  const overlay = document.getElementById('overlay');
-  const overlayInner = document.getElementById('overlay-inner');
-  const overlayContent = document.getElementById('overlay-content');
-  const overlayClose = document.getElementById('overlay-close');
+  const newsBtn = $('#btn-news');
+  const newsBadge = $('#news-badge');
 
-  const newsBadge = document.getElementById('news-badge');
-  const btnNews = document.getElementById('btn-news');
+  const ovalLearn = $('#oval-learn');
+  const THEME_KEY = 'brad_theme_pref';
+  // NEWS_VERSION: increment this string when you publish a new "Nouveautés" entry
+  const NEWS_VERSION = '1'; // <-- bump to '2' on next update to make the badge reappear for all users
+  const NEWS_READ_KEY = 'brad_news_seen_version';
 
-  const THEME_KEY = 'brad_theme_pref'; // 'auto' | 'light' | 'dark'
-  const NEWS_KEY = 'brad_news_seen';   // stores ISO date when read
-
-  /* ---------------------------
-     Panels content map (editable)
-     --------------------------- */
+  // Panels content (welcome = en savoir plus)
   const PANELS = {
     welcome: `
-      <h2>Bienvenue</h2>
-      <p>Ce site centralise tout l'univers Brad Bitt : jeu, Épisodes, musiques et lore.</p>
-    `,
-    game: `
-      <h2>Brad Bitt, mais le jeu</h2>
-      <p>Aperçu du jeu, mécaniques et teasing. (Screens, sprites &amp; notes de dev.)</p>
-    `,
-    lore: `
-      <h2>L'histoire de Bitt</h2>
-      <p>Le lore complet : origines, chronologie et influences.</p>
-    `,
-    ep1: `
-      <h2>Épisode 1 — La soirée</h2>
-      <p>Brad se rend à une soirée — début du mystère.</p>
-    `,
-    ep2: `
-      <h2>Épisode 2 — Changement de programme</h2>
-      <p>Brad entre dans une forêt étrange et disparaît.</p>
-    `,
-    ep3: `
-      <h2>Épisode 3 — Retard</h2>
-      <p>Brad découvre une salle mystérieuse... (à suivre)</p>
+      <h2>En savoir plus</h2>
+      <p>
+        C'est ici que l'univers de Brad Bitt prend vie. Sur ce site vous trouverez des articles de développement, 
+        des aperçus exclusifs des prochains projets, des coulisses et des contenus réservés aux visiteurs curieux.
+        Nous partageons des notes de design, des prototypes, et des inspirations qui façonnent l'expérience.
+      </p>
+      <p>
+        N'hésitez pas à revenir régulièrement — de nouvelles pages, vidéos et prototypes sont ajoutés au fil du temps.
+        Abonnez-vous aux mises à jour ou repassez de temps à autre pour découvrir les nouveautés.
+      </p>
     `,
     news: `
       <h2>Nouveautés</h2>
-      <p>C’est ici que vous trouverez les dernières mises à jour du site.</p>
-      <p><button data-news-dismiss>J'ai lu</button></p>
+      <p>C’est ici que vous trouverez les dernières mises à jour du site et des contenus ajoutés récemment.</p>
+    `,
+    game: `
+      <h2>Brad Bitt — Le jeu</h2>
+      <p>Aperçu du jeu, mécaniques et notes de développement. Screens, sprites et petits aperçus.</p>
     `
   };
 
-  /* ---------------------------
-     Overlay open/close + accessibility
-     --------------------------- */
-  let lastFocused = null;
-
-  function getFocusable(el) {
-    if (!el) return [];
-    return Array.from(el.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'))
-      .filter(node => node.offsetParent !== null && !node.hasAttribute('disabled'));
-  }
-
-  function setMainInert(inert) {
-    if (!main) return;
-    // prefer the inert API when available
+  /* NEWS badge logic */
+  function refreshNewsBadge() {
     try {
-      if ('inert' in HTMLElement.prototype) {
-        main.inert = inert;
-      } else {
-        main.setAttribute('aria-hidden', inert ? 'true' : 'false');
-      }
-    } catch (e) {
-      // fallback
-      main.setAttribute('aria-hidden', inert ? 'true' : 'false');
-    }
+      const seen = localStorage.getItem(NEWS_READ_KEY);
+      if (!newsBadge) return;
+      newsBadge.hidden = (seen === NEWS_VERSION);
+    } catch (e) { /* ignore */ }
+  }
+  refreshNewsBadge();
+
+  if (newsBtn) {
+    newsBtn.addEventListener('click', () => {
+      try { localStorage.setItem(NEWS_READ_KEY, NEWS_VERSION); } catch (e) {}
+      if (newsBadge) newsBadge.hidden = true;
+      openPanel('news');
+    });
   }
 
-  function openPanel(key) {
+  /* Overlay open/close + video player injection */
+  let lastFocused = null;
+  function openPanel(key, options = {}) {
     if (!overlay || !overlayContent || !overlayInner) return;
-    const html = PANELS[key] || `<p>Contenu à venir</p>`;
+    const html = PANELS[key] || (options.html || `<p>Contenu à venir</p>`);
     overlayContent.innerHTML = html;
-
     overlay.classList.remove('hidden');
     overlay.setAttribute('aria-hidden', 'false');
-    overlay.setAttribute('role', 'dialog');
-    overlay.setAttribute('aria-modal', 'true');
-
-    setMainInert(true);
-
     lastFocused = document.activeElement;
     document.body.style.overflow = 'hidden';
-
-    // ensure overlayInner is focusable
-    if (!overlayInner.hasAttribute('tabindex')) overlayInner.setAttribute('tabindex', '-1');
-
-    // ensure focus lands inside: try to focus first interactive element
-    setTimeout(() => {
-      overlayInner.focus();
-      const foc = getFocusable(overlayInner);
-      if (foc.length) foc[0].focus();
-    }, 50);
-
-    // If we opened the news panel, mark it as seen and hide badge
-    if (key === 'news') {
-      try { localStorage.setItem(NEWS_KEY, new Date().toISOString()); } catch (e) {}
-      if (newsBadge) newsBadge.hidden = true;
-    }
+    overlayInner.focus();
   }
-
   function closePanel() {
-    if (!overlay || !overlayInner) return;
+    if (!overlay) return;
     overlay.classList.add('hidden');
     overlay.setAttribute('aria-hidden', 'true');
-    overlay.removeAttribute('role');
-    overlay.removeAttribute('aria-modal');
-
-    setMainInert(false);
-
     document.body.style.overflow = '';
-    // restore focus
     if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
-    lastFocused = null;
+    // stop embedded video by clearing content
+    if (overlayContent) overlayContent.innerHTML = '';
   }
-
   if (overlayClose) overlayClose.addEventListener('click', closePanel);
-  if (overlay) {
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) closePanel(); });
+  if (overlay) overlay.addEventListener('click', (e) => { if (e.target === overlay) closePanel(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay && !overlay.classList.contains('hidden')) closePanel(); });
+
+  /* open 'welcome' from the oval button (En savoir plus) */
+  if (ovalLearn) {
+    ovalLearn.addEventListener('click', () => openPanel('welcome'));
   }
 
-  // Escape closes overlay
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' || e.key === 'Esc') {
-      if (overlay && !overlay.classList.contains('hidden')) closePanel();
-    }
-  });
-
-  // Focus trap inside overlay
-  if (overlayInner) {
-    overlayInner.addEventListener('keydown', (e) => {
-      if (e.key !== 'Tab') return;
-      const foc = getFocusable(overlayInner);
-      if (!foc.length) {
-        // no focusable elements: keep focus on overlayInner
-        e.preventDefault();
-        overlayInner.focus();
-        return;
-      }
-      const first = foc[0];
-      const last = foc[foc.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    });
-  }
-
-  // Handle clicks inside overlay (for dismissing news badge via button in panel)
-  if (overlayContent) {
-    overlayContent.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-news-dismiss]');
-      if (btn) {
-        try { localStorage.setItem(NEWS_KEY, new Date().toISOString()); } catch (err) {}
-        if (newsBadge) newsBadge.hidden = true;
-      }
-    });
-  }
-
-  /* Map buttons -> panels */
-  $$('[data-panel]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const k = btn.getAttribute('data-panel');
-      // open panel (openPanel handles news marking)
-      openPanel(k);
-    });
-  });
-
-  // news badge initial state
-  try {
-    const seen = localStorage.getItem(NEWS_KEY);
-    if (newsBadge) newsBadge.hidden = !!seen;
-  } catch (err) { /* ignore */ }
-
-  // Ep-card click to open panels when .btn small inside ep-card is clicked
-  $$('.ep-card [data-panel]').forEach(b => b.addEventListener('click', (e) => {
-    const k = b.getAttribute('data-panel');
-    openPanel(k);
-  }));
-
-  /* ---------------------------
-     Theme handling
-     --------------------------- */
-  const themeToggle = document.getElementById('theme-toggle');
-
-  function applyTheme(mode) {
-    // mode: 'auto' | 'light' | 'dark'
-    try { localStorage.setItem(THEME_KEY, mode); } catch (e) {}
-
-    // If 'auto', use system preference but still record pref as 'auto'
-    if (mode === 'auto') {
-      const isLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-      document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
-      document.documentElement.setAttribute('data-theme-pref', 'auto');
-    } else if (mode === 'light') {
-      document.documentElement.setAttribute('data-theme', 'light');
-      document.documentElement.setAttribute('data-theme-pref', 'light');
-    } else if (mode === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      document.documentElement.setAttribute('data-theme-pref', 'dark');
-    }
-
-    updateThemeToggleTitle(mode);
-  }
-
-  function updateThemeToggleTitle(mode) {
-    if (!themeToggle) return;
-    const label = mode === 'auto' ? 'Auto' : (mode === 'light' ? 'Clair' : 'Sombre');
-    themeToggle.title = `Mode : ${label}`;
-    // update aria-pressed for assistive tech (not strictly a toggle button, but helpful)
-    themeToggle.setAttribute('aria-pressed', (mode !== 'auto').toString());
-  }
-
-  function cycleTheme() {
-    const current = localStorage.getItem(THEME_KEY) || 'auto';
-    const order = ['auto', 'light', 'dark'];
-    const idx = Math.max(0, order.indexOf(current));
-    const next = order[(idx + 1) % order.length];
-    applyTheme(next);
-  }
-
-  if (themeToggle) themeToggle.addEventListener('click', cycleTheme);
-
-  // react to system changes only when in auto
-  if (window.matchMedia) {
-    const mq = window.matchMedia('(prefers-color-scheme: light)');
-    const mqHandler = () => {
-      const mode = localStorage.getItem(THEME_KEY) || 'auto';
-      if (mode === 'auto') applyTheme('auto');
-    };
-    if (mq.addEventListener) mq.addEventListener('change', mqHandler);
-    else if (mq.addListener) mq.addListener(mqHandler);
-  }
-
-  // init theme from storage
-  const initialTheme = localStorage.getItem(THEME_KEY) || 'auto';
-  applyTheme(initialTheme);
-
-  /* ---------------------------
-     Restore reveal animations & ep-card interactions
-     --------------------------- */
-  try {
-    const revealEls = $$('.reveal');
-    revealEls.forEach((el, i) => setTimeout(() => el.classList.add('visible'), i * 60));
-  } catch (e) { /* ignore */ }
-
-  // simple flip handler for ep-cards (click/tap)
+  /* ep-card flip & visionner handler */
   $$('.ep-card').forEach(card => {
     card.addEventListener('click', (e) => {
-      // avoid toggling when clicking actionable controls inside
-      if (e.target.closest('[data-panel]') || e.target.closest('button') || e.target.closest('a')) return;
+      if (e.target.closest('button') || e.target.closest('a')) return;
       card.classList.toggle('flipped');
     });
+
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        card.classList.toggle('flipped');
+        e.preventDefault();
+      }
+    });
   });
+
+  // handle Visionner button clicks (delegated)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-visionner');
+    if (!btn) return;
+    const videoId = btn.getAttribute('data-video') || btn.closest('.ep-card')?.getAttribute('data-video');
+    if (!videoId) {
+      openPanel(null, { html: '<p>Vidéo indisponible.</p>' });
+      return;
+    }
+    const playerHtml = `
+      <h2>Lecture</h2>
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1" 
+                title="Vidéo" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen></iframe>
+      </div>
+      <p style="margin-top:12px;color:var(--muted)">Fermez la fenêtre pour revenir au site.</p>
+    `;
+    openPanel(null, { html: playerHtml });
+  });
+
+  /* Theme init (light/dark/auto) */
+  try {
+    const initial = localStorage.getItem(THEME_KEY) || 'auto';
+    if (initial === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    else if (initial === 'dark') document.documentElement.removeAttribute('data-theme');
+    else {
+      const isLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      if (isLight) document.documentElement.setAttribute('data-theme', 'light');
+      else document.documentElement.removeAttribute('data-theme');
+    }
+  } catch(e){/* ignore */ }
+
+  /* helper to aid future deployments */
+  window.__brad_setNewsVersion = (ver) => {
+    try { localStorage.removeItem(NEWS_READ_KEY); } catch (e) {}
+    console.log('To show the badge to users, update NEWS_VERSION in script and deploy with new version:', ver);
+  };
 
 });

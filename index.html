@@ -53,7 +53,12 @@
       <h1>Bienvenue sur le site</h1>
       <p class="hero-lead">Regroupe les jeux, les épisodes et les coulisses de Brad Bitt.</p>
 
-      <button class="oval-btn" id="oval-learn" aria-controls="panel-welcome">En savoir plus</button>
+      <button class="oval-btn" id="oval-learn" aria-controls="panel-welcome">
+        <span class="label">En savoir plus</span>
+        <span class="mini-arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </button>
     </section>
 
     <section class="content container">
@@ -89,19 +94,36 @@
             <p>Mini-série d'introduction : épisodes, synopsis et teasers.</p>
           </div>
 
+          <!-- Remplacez YOUTUBE_ID_EP* par les vrais IDs -->
           <div class="ep-grid" id="ep-grid" aria-hidden="false">
-            <!-- Episodes cards -->
-            <div class="ep-card" tabindex="0" data-episode="1">
-              <div class="ep-front"><strong>Épisode 1</strong><span>La soirée</span></div>
-              <div class="ep-back"><p>Brad se rend à une soirée — début du mystère.</p><button class="btn small" data-panel="ep1">Voir</button></div>
+            <div class="ep-card" tabindex="0" data-episode="1" data-video="YOUTUBE_ID_EP1">
+              <div class="ep-card-inner">
+                <div class="ep-front"><strong>Épisode 1</strong><span>La soirée</span></div>
+                <div class="ep-back">
+                  <p class="ep-summary">Brad Bitt est invité à une somptueuse soirée ; pressé, il s’habille et prend sa voiture habituelle. Mais sur le chemin, un événement inattendu survient lorsqu’il s’engage dans une forêt mystérieuse...</p>
+                  <button class="btn btn-visionner" data-video="YOUTUBE_ID_EP1">Visionner</button>
+                </div>
+              </div>
             </div>
-            <div class="ep-card" tabindex="0" data-episode="2">
-              <div class="ep-front"><strong>Épisode 2</strong><span>Changement de programme</span></div>
-              <div class="ep-back"><p>Brad entre dans une forêt étrange et disparaît.</p><button class="btn small" data-panel="ep2">Voir</button></div>
+
+            <div class="ep-card" tabindex="0" data-episode="2" data-video="YOUTUBE_ID_EP2">
+              <div class="ep-card-inner">
+                <div class="ep-front"><strong>Épisode 2</strong><span>Changement de programme</span></div>
+                <div class="ep-back">
+                  <p class="ep-summary">Après une nuit mouvementée, Brad est capturé par des hommes cagoulés. Interrogé sur des accusations incompréhensibles, il refuse d’avouer et tente de s’échapper — mais sa fuite le précipite dans un trou aussi étrange qu’effrayant.</p>
+                  <button class="btn btn-visionner" data-video="YOUTUBE_ID_EP2">Visionner</button>
+                </div>
+              </div>
             </div>
-            <div class="ep-card" tabindex="0" data-episode="3">
-              <div class="ep-front"><strong>Épisode 3</strong><span>Retard</span></div>
-              <div class="ep-back"><p>Brad découvre une salle mystérieuse... (à suivre)</p><button class="btn small" data-panel="ep3">Voir</button></div>
+
+            <div class="ep-card" tabindex="0" data-episode="3" data-video="YOUTUBE_ID_EP3">
+              <div class="ep-card-inner">
+                <div class="ep-front"><strong>Épisode 3</strong><span>Retard</span></div>
+                <div class="ep-back">
+                  <p class="ep-summary">Réveillé après une chute amortie par un improbable trampoline, Brad découvre un lieu abandonné et une porte menaçante : un avertissement clair invite à ne pas entrer… naturellement, il n’entend pas s’arrêter là.</p>
+                  <button class="btn btn-visionner" data-video="YOUTUBE_ID_EP3">Visionner</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
