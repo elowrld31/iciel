@@ -46,11 +46,6 @@ html,body{
 .nav-item:focus{outline:2px solid rgba(255,255,255,0.06);outline-offset:3px}
 .badge{display:inline-block;background:#ff4d6d;color:#fff;border-radius:8px;padding:2px 6px;font-size:11px;margin-left:8px}
 
-/* Respecter l'attribut hidden pour les badges (empêche les règles .badge de réafficher la pastille) */
-.badge[hidden]{
-  display: none !important;
-}
-
 /* Theme toggle */
 .theme-toggle{display:inline-flex;align-items:center;gap:8px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);cursor:pointer}
 .theme-toggle svg{opacity:0.45;transition:opacity .18s ease, transform .18s ease}
@@ -139,7 +134,7 @@ html,body{
 .ep-front{background-color:var(--card); color:var(--text); font-weight:700;text-align:center}
 .ep-front span{display:block;font-weight:400;font-size:13px;color:var(--muted)}
 .ep-back{background:var(--card); color:var(--text); transform:rotateY(180deg); text-align:center; padding:12px; justify-content:space-between}
-.ep-back p.ep-summary{font-weight:500;color:var(--muted);margin:0 0 12px 0;line-height:1.4; text-align:left; width:100%; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflo[...]
+.ep-back p.ep-summary{font-weight:500;color:var(--muted);margin:0 0 12px 0;line-height:1.4; text-align:left; width:100%; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;}
 .ep-back .btn-visionner{display:inline-flex;align-items:center;gap:8px; align-self:flex-end; margin-top:8px}
 
 /* Video wrapper inside overlay */
