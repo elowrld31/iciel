@@ -14,31 +14,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const ovalLearn = $('#oval-learn');
   const themeToggle = $('#theme-toggle');
   const THEME_KEY = 'brad_theme_pref';
-  // Nouveau comportement du badge : plus de persistence (masquage uniquement au clic)
+  // Nouveau comportement du badge : clé simple boolean
   const NEWS_SEEN_KEY = 'brad_news_seen';
 
-  /* NEWS badge logic (simple: show on load, hide on click; no persistence) */
+  /* NEWS badge logic (simple + robuste) */
   function refreshNewsBadge() {
-    if (!newsBadge) return;
-    // Forcer l'affichage au chargement (runtime uniquement)
-    newsBadge.hidden = false;
-    newsBadge.style.display = '';
+    try {
+      if (!newsBadge) return;
+      const seen = localStorage.getItem(NEWS_SEEN_KEY);
+      // Si jamais vu = 'true' -> cacher, sinon afficher (première visite ou réinitialisation)
+      newsBadge.hidden = (seen === 'true');
+    } catch (e) {
+      // si localStorage indisponible, afficher par précaution
+      if (newsBadge) newsBadge.hidden = true;
+    }
   }
 
   function markNewsRead() {
-    if (newsBadge) {
-      newsBadge.hidden = true;
-      newsBadge.style.display = 'none';
-    }
+    try {
+      localStorage.setItem(NEWS_SEEN_KEY, 'true');
+    } catch (e) { /* ignore */ }
+    if (newsBadge) newsBadge.hidden = true;
   }
 
-  // utilitaire pour réactiver le badge (runtime, sans toucher au stockage)
+  // utilitaire pour réactiver le badge (tests / mise à jour manuelle)
   window.__brad_resetNews = () => {
-    if (newsBadge) {
-      newsBadge.hidden = false;
-      newsBadge.style.display = '';
-    }
-    console.log('Badge "Nouveautés" réactivé (runtime).');
+    try { localStorage.removeItem(NEWS_SEEN_KEY); } catch (e) {}
+    refreshNewsBadge();
+    console.log('Badge "Nouveautés" réactivé (localStorage supprimé).');
   };
 
   // initialise le badge au chargement
@@ -66,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       <p>Vous pouvez y découvrir le futur jeu et son univers, suivre les aventures de Brad à travers de courts épisodes, et explorer peu à peu l’histoire qui se dessine en arrière-plan.</p>
 
-      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution du projet.
+      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution du projet.</p>
 
       <p>Utilisez les boutons « Découvrir » et « Voir » pour naviguer librement entre les contenus.</p>
     `,
