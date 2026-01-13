@@ -1,5 +1,4 @@
 // script.js — gestion badge / thèmes / overlays / ep-cards / lecteur vidéo
-
 document.addEventListener('DOMContentLoaded', () => {
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -13,24 +12,63 @@ document.addEventListener('DOMContentLoaded', () => {
   const newsBadge = $('#news-badge');
 
   const ovalLearn = $('#oval-learn');
+  const themeToggle = $('#theme-toggle');
   const THEME_KEY = 'brad_theme_pref';
-  // NEWS_VERSION: increment this string when you publish a new "Nouveautés" entry
-  const NEWS_VERSION = '1'; // <-- bump to '2' on next update to make the badge reappear for all users
-  const NEWS_READ_KEY = 'brad_news_seen_version';
+  // Nouveau comportement du badge : plus de persistence (masquage uniquement au clic)
+  const NEWS_SEEN_KEY = 'brad_news_seen';
+
+  /* NEWS badge logic (simple: show on load, hide on click; no persistence) */
+  function refreshNewsBadge() {
+    if (!newsBadge) return;
+    // Forcer l'affichage au chargement (runtime uniquement)
+    newsBadge.hidden = false;
+    newsBadge.style.display = '';
+  }
+
+  function markNewsRead() {
+    if (newsBadge) {
+      newsBadge.hidden = true;
+      newsBadge.style.display = 'none';
+    }
+  }
+
+  // utilitaire pour réactiver le badge (runtime, sans toucher au stockage)
+  window.__brad_resetNews = () => {
+    if (newsBadge) {
+      newsBadge.hidden = false;
+      newsBadge.style.display = '';
+    }
+    console.log('Badge "Nouveautés" réactivé (runtime).');
+  };
+
+  // initialise le badge au chargement
+  refreshNewsBadge();
+
+  // click handlers
+  if (newsBtn) {
+    newsBtn.addEventListener('click', () => {
+      markNewsRead();
+      openPanel('news');
+    });
+  }
+  if (newsBadge) {
+    newsBadge.addEventListener('click', (e) => {
+      e.stopPropagation();
+      markNewsRead();
+    });
+  }
 
   // Panels content (welcome = en savoir plus)
   const PANELS = {
     welcome: `
       <h2>En savoir plus</h2>
-      <p>
-        C'est ici que l'univers de Brad Bitt prend vie. Sur ce site vous trouverez des articles de développement, 
-        des aperçus exclusifs des prochains projets, des coulisses et des contenus réservés aux visiteurs curieux.
-        Nous partageons des notes de design, des prototypes, et des inspirations qui façonnent l'expérience.
-      </p>
-      <p>
-        N'hésitez pas à revenir régulièrement — de nouvelles pages, vidéos et prototypes sont ajoutés au fil du temps.
-        Abonnez-vous aux mises à jour ou repassez de temps à autre pour découvrir les nouveautés.
-      </p>
+      <p> Ce site rassemble tout ce qui gravite autour de Brad Bitt : les expériences interactives, les épisodes, les ambiances sonores et les éléments de récit qui donnent vie à ce monde.</p>
+
+      <p>Vous pouvez y découvrir le futur jeu et son univers, suivre les aventures de Brad à travers de courts épisodes, et explorer peu à peu l’histoire qui se dessine en arrière-plan.</p>
+
+      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution du projet.
+
+      <p>Utilisez les boutons « Découvrir » et « Voir » pour naviguer librement entre les contenus.</p>
     `,
     news: `
       <h2>Nouveautés</h2>
@@ -38,27 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
     `,
     game: `
       <h2>Brad Bitt — Le jeu</h2>
-      <p>Aperçu du jeu, mécaniques et notes de développement. Screens, sprites et petits aperçus.</p>
+      <p>Aperçu du jeu, mécaniques et notes de développement.</p>
     `
   };
-
-  /* NEWS badge logic */
-  function refreshNewsBadge() {
-    try {
-      const seen = localStorage.getItem(NEWS_READ_KEY);
-      if (!newsBadge) return;
-      newsBadge.hidden = (seen === NEWS_VERSION);
-    } catch (e) { /* ignore */ }
-  }
-  refreshNewsBadge();
-
-  if (newsBtn) {
-    newsBtn.addEventListener('click', () => {
-      try { localStorage.setItem(NEWS_READ_KEY, NEWS_VERSION); } catch (e) {}
-      if (newsBadge) newsBadge.hidden = true;
-      openPanel('news');
-    });
-  }
 
   /* Overlay open/close + video player injection */
   let lastFocused = null;
@@ -71,6 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
     lastFocused = document.activeElement;
     document.body.style.overflow = 'hidden';
     overlayInner.focus();
+
+    // If opening news panel, mark news as read
+    if (key === 'news') markNewsRead();
   }
   function closePanel() {
     if (!overlay) return;
@@ -105,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // handle Visionner button clicks (delegated)
+  // handle Visionner / Voir button clicks (delegated)
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.btn-visionner');
     if (!btn) return;
@@ -126,22 +149,88 @@ document.addEventListener('DOMContentLoaded', () => {
     openPanel(null, { html: playerHtml });
   });
 
-  /* Theme init (light/dark/auto) */
-  try {
-    const initial = localStorage.getItem(THEME_KEY) || 'auto';
-    if (initial === 'light') document.documentElement.setAttribute('data-theme', 'light');
-    else if (initial === 'dark') document.documentElement.removeAttribute('data-theme');
-    else {
-      const isLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-      if (isLight) document.documentElement.setAttribute('data-theme', 'light');
-      else document.documentElement.removeAttribute('data-theme');
-    }
-  } catch(e){/* ignore */ }
+  /* Theme: robuste + logo switching (folder 'images') */
+  const logoImg = document.getElementById('site-logo');
 
-  /* helper to aid future deployments */
-  window.__brad_setNewsVersion = (ver) => {
-    try { localStorage.removeItem(NEWS_READ_KEY); } catch (e) {}
-    console.log('To show the badge to users, update NEWS_VERSION in script and deploy with new version:', ver);
-  };
+  // Mapping explicite : light -> use 'sombre' logo, dark -> use 'clair' logo
+  function updateLogoForTheme(pref) {
+    if (!logoImg) return;
+
+    if (pref === 'light') {
+      // light theme => use the dark (sombre) logo for contrast
+      logoImg.src = 'images/logo bb site clair.png';
+    } else if (pref === 'dark') {
+      // dark theme => use the light (clair) logo for contrast
+      logoImg.src = 'images/logo bb site sombre.png';
+    } else {
+      // auto: pick according to prefers-color-scheme and apply same mapping
+      const mm = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
+      const isLight = mm ? mm.matches : true;
+      logoImg.src = isLight
+        ? 'images/logo bb site clair.png'
+        : 'images/logo bb site sombre.png';
+    }
+  }
+
+  function applyTheme(pref = 'auto', save = false) {
+    try {
+      const root = document.documentElement;
+
+      if (pref === 'light') {
+        root.setAttribute('data-theme', 'light');
+      } else if (pref === 'dark') {
+        root.removeAttribute('data-theme');
+      } else {
+        // auto
+        const mm = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
+        const isLight = mm ? mm.matches : true;
+        if (isLight) root.setAttribute('data-theme', 'light');
+        else root.removeAttribute('data-theme');
+      }
+
+      // update toggle visuals
+      if (themeToggle) {
+        themeToggle.classList.remove('is-light','is-dark');
+        if (pref === 'light') themeToggle.classList.add('is-light');
+        else if (pref === 'dark') themeToggle.classList.add('is-dark');
+        // title
+        const title = pref === 'auto' ? 'Mode : automatique' : (pref === 'light' ? 'Mode : clair' : 'Mode : sombre');
+        themeToggle.setAttribute('title', title);
+        themeToggle.setAttribute('aria-label', title);
+      }
+
+      // update logo according to mapping requested
+      updateLogoForTheme(pref);
+
+      if (save) {
+        try { localStorage.setItem(THEME_KEY, pref); } catch(e) {}
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  // initial read + apply
+  try {
+    const saved = localStorage.getItem(THEME_KEY) || 'auto';
+    applyTheme(saved, false);
+  } catch(e){ applyTheme('auto', false); }
+
+  // cycle through modes on click: auto -> light -> dark -> auto
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = localStorage.getItem(THEME_KEY) || 'auto';
+      const order = ['auto','light','dark'];
+      const next = order[(order.indexOf(current) + 1) % order.length];
+      applyTheme(next, true);
+    });
+  }
+
+  /* --- Reveal elements on load --- */
+  (function revealOnLoad() {
+    const reveals = $$('.reveal');
+    if (!reveals.length) return;
+    reveals.forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 80 * i);
+    });
+  })();
 
 });
