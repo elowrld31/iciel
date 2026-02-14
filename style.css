@@ -46,6 +46,11 @@ html,body{
 .nav-item:focus{outline:2px solid rgba(255,255,255,0.06);outline-offset:3px}
 .badge{display:inline-block;background:#ff4d6d;color:#fff;border-radius:8px;padding:2px 6px;font-size:11px;margin-left:8px}
 
+/* Respecter l'attribut hidden pour les badges (empêche les règles .badge de réafficher la pastille) */
+.badge[hidden]{
+  display: none !important;
+}
+
 /* Theme toggle */
 .theme-toggle{display:inline-flex;align-items:center;gap:8px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);cursor:pointer}
 .theme-toggle svg{opacity:0.45;transition:opacity .18s ease, transform .18s ease}
@@ -125,6 +130,12 @@ html,body{
 .card h2{margin:0 0 8px 0;font-size:22px}
 .card p{color:var(--muted);margin:0 0 12px 0;line-height:1.6;max-width:100%}
 
+/* New: ensure .card-actions stacks nicely on small screens (buttons side-by-side on desktop, stacked on mobile) */
+@media (max-width:480px){
+  .card-actions{flex-direction:column;align-items:stretch}
+  .card-actions .oval-btn{width:100%}
+}
+
 /* EP GRID & FLIP CARDS */
 .ep-grid{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
 .ep-card{position:relative;width:200px;height:120px;border-radius:12px;cursor:pointer;perspective:1000px;overflow:visible}
@@ -134,8 +145,23 @@ html,body{
 .ep-front{background-color:var(--card); color:var(--text); font-weight:700;text-align:center}
 .ep-front span{display:block;font-weight:400;font-size:13px;color:var(--muted)}
 .ep-back{background:var(--card); color:var(--text); transform:rotateY(180deg); text-align:center; padding:12px; justify-content:space-between}
-.ep-back p.ep-summary{font-weight:500;color:var(--muted);margin:0 0 12px 0;line-height:1.4; text-align:left; width:100%; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;}
-.ep-back .btn-visionner{display:inline-flex;align-items:center;gap:8px; align-self:flex-end; margin-top:8px}
+
+/* Correction: rendre le résumé scrollable si trop long (desktop / consoles) */
+.ep-back p.ep-summary{
+  font-weight:500;
+  color:var(--muted);
+  margin:0 0 12px 0;
+  line-height:1.4;
+  text-align:left;
+  width:100%;
+  max-height:5.6em; /* env. 4 lignes à 1.4 line-height */
+  overflow:auto; /* permet le défilement vertical si le texte dépasse */
+  word-wrap:break-word;
+  white-space:normal;
+  text-overflow:ellipsis;
+  padding-right:6px; /* espace pour la scrollbar */
+  -webkit-overflow-scrolling: touch;
+}
 
 /* Video wrapper inside overlay */
 .video-wrap{position:relative;padding-top:56.25%;width:100%}
@@ -153,6 +179,36 @@ html,body{
 :root[data-theme="light"] .overlay-inner{background:linear-gradient(180deg,#ffffff,#f7f8fb);color:var(--text);border:1px solid rgba(7,16,20,0.06)}
 .overlay .close{position:absolute;top:12px;right:12px;border:0;background:transparent;color:var(--muted);font-size:20px;cursor:pointer}
 .overlay-content{max-height:70vh;overflow:auto;padding-right:6px}
+
+/* New: styles for the "Nouveautés" history list and cards */
+.news-list{display:flex;flex-direction:column;gap:12px;padding:6px 4px}
+.news-card{
+  background:var(--card);
+  border-radius:10px;
+  padding:12px 14px;
+  border:1px solid rgba(255,255,255,0.03);
+  box-shadow:0 8px 20px rgba(0,0,0,0.28);
+  transition:transform .18s ease, box-shadow .18s ease;
+  cursor:pointer;
+  overflow:hidden;
+}
+.news-card:focus{outline:2px solid rgba(50,192,193,0.08);outline-offset:3px}
+.news-card .meta{display:flex;gap:12px;align-items:center;justify-content:space-between}
+.news-card .meta .version{font-weight:800}
+.news-card .meta .date{color:var(--muted);font-size:13px}
+.news-card .teaser{color:var(--muted);margin-top:6px;font-size:14px}
+
+/* Detail collapsible area */
+.news-card .detail{
+  margin-top:10px;
+  color:var(--text);
+  overflow:hidden;
+  max-height:0;
+  transition:max-height .36s cubic-bezier(.2,.9,.2,1), opacity .28s ease;
+  opacity:0;
+}
+.news-card.expanded{ box-shadow:0 18px 40px rgba(0,0,0,0.36); transform:translateY(-4px) }
+.news-card.expanded .detail{ opacity:1; max-height:420px; }
 
 /* Footer: minimal, balanced left/right */
 .site-footer{padding:12px 0;background:transparent}
