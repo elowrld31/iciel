@@ -1,91 +1,169 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Site en maintenance</title>
-  <style>
-    body {
-      background-color: #222;
-      color: #eee;
-      font-family: Arial, sans-serif;
-      height: 100vh;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      flex-direction: column;
-    }
-    h1 {
-      font-size: 3em;
-      margin-bottom: 0.5em;
-    }
-    p {
-      font-size: 1.5em;
-      color: #aaa;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brad Bitt, mais le site</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Site en maintenance.</h1>
-  <p>Pas de panique, le site sera accessible d'ici quelques minutes.</p>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand" role="banner">
+        <div class="logo" aria-hidden="true">
+         <img 
+  id="site-logo"
+  src="images/logo bb site clair.png"
+  alt="Logo Brad Bitt">
+        </div>
+        <!-- Nom du site retiré volontairement pour éviter confusion -->
+      </div>
 
-  <script>
-(function() {
-  // Date cible : 14 février 2026 à 9h25
-  var maintenanceStart = new Date(2026, 1, 14, 9, 25, 0); // mois=1 (février)
-  var maintenanceDurationMs = 5 * 60 * 1000; // 5 minutes en ms
-  
-  // Rafraîchit le calcul du temps toutes les secondes
-  function checkMaintenance() {
-    var now = new Date();
-    var end = new Date(maintenanceStart.getTime() + maintenanceDurationMs);
-    
-    if (now >= maintenanceStart && now < end) {
-      // Pendant la maintenance : affiche le compte à rebours
-      if (!document.getElementById('maintenance-countdown')) {
-        var countdownDiv = document.createElement('div');
-        countdownDiv.id = 'maintenance-countdown';
-        countdownDiv.style.marginTop = '2em';
-        
-        var label = document.createElement('p');
-        label.id = 'maintenance-label';
-        label.style.fontWeight = 'bold';
-        label.textContent = 'Durée de la maintenance :';
-        countdownDiv.appendChild(label);
+      <nav class="mini-nav" aria-label="Navigation secondaire">
+        <button class="nav-item" data-panel="news" id="btn-news">Nouveautés <span class="badge" id="news-badge">1</span></button>
 
-        var timer = document.createElement('span');
-        timer.id = 'maintenance-timer';
-        timer.style.fontSize = '2em';
-        countdownDiv.appendChild(timer);
+        <button id="theme-toggle" class="theme-toggle" aria-label="Changer le thème" title="Mode : automatique">
+          <!-- SVG icons (minimal) -->
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" fill="currentColor"></circle>
+            <g stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+              <line x1="12" y1="2" x2="12" y2="4"></line>
+              <line x1="12" y1="20" x2="12" y2="22"></line>
+              <line x1="2" y1="12" x2="4" y2="12"></line>
+              <line x1="20" y1="12" x2="22" y2="12"></line>
+              <line x1="4.5" y1="4.5" x2="6" y2="6"></line>
+              <line x1="18" y1="18" x2="19.5" y2="19.5"></line>
+              <line x1="4.5" y1="19.5" x2="6" y2="18"></line>
+              <line x1="18" y1="6" x2="19.5" y2="4.5"></line>
+            </g>
+          </svg>
 
-        document.body.appendChild(countdownDiv);
-      }
-      
-      var diff = end - now;
-      var mins = Math.floor(diff / 60000);
-      var secs = Math.floor((diff % 60000) / 1000);
-      var timerElement = document.getElementById('maintenance-timer');
-      timerElement.textContent = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
-      
-    } else if (now >= end && !document.getElementById('maintenance-completed')) {
-      // Après la maintenance : affiche le message de fin
-      var countdownDiv = document.getElementById('maintenance-countdown');
-      if (countdownDiv) {
-        countdownDiv.id = 'maintenance-completed';
-        document.getElementById('maintenance-label').textContent = 'Le site a été mis à jour, vous pouvez dès à présent actualiser la page.';
-        document.getElementById('maintenance-timer').style.display = 'none';
-      }
-    }
-  }
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path fill="currentColor" d="M21 12.8A9 9 0 0111.2 3 7 7 0 0021 12.8z"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
 
-  // Vérifie immédiatement
-  checkMaintenance();
-  
-  // Puis vérifie toutes les secondes
-  setInterval(checkMaintenance, 1000);
-})();
-  </script>
+  <main id="app-main">
+    <section class="hero container reveal">
+      <h1>Bienvenue sur le site</h1>
+
+      <!-- En savoir plus: ovale gradient plus large and visible -->
+      <button class="oval-btn oval-primary large" id="oval-learn" aria-controls="panel-welcome" aria-expanded="false">
+        <span class="label">En savoir plus</span>
+      </button>
+    </section>
+
+    <section class="content container">
+      <!-- CARD: Game -->
+      <article class="card reveal" id="game">
+        <div class="card-inner">
+          <div class="card-top">
+            <h2>Brad Bitt, mais le jeu</h2>
+            <p>Plongez dans l'univers de Bitt.</p>
+          </div>
+
+          <div class="card-actions">
+            <!-- Discover button: opens Canva presentation in new tab -->
+            <a class="oval-btn oval-neutral" id="btn-discover" href="https://bbmaislaprésentation.my.canva.site" target="_blank" rel="noopener noreferrer" role="button">Découvrir</a>
+            <!-- Nouveau bouton Suivi du jeu -->
+            <a class="oval-btn oval-neutral" id="btn-follow" href="https://bradbprog.netlify.app" target="_blank" rel="noopener noreferrer" role="button">Suivi du jeu</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD: Episodes -->
+      <article class="card reveal" id="episodes">
+        <div class="card-inner">
+          <div class="card-top">
+            <h2>Les aventures de Bitt</h2>
+            <p>Mini-série : petits épisodes, gros mystère.</p>
+          </div>
+
+          <!-- EP GRID with embedded video IDs on data-video -->
+          <div class="ep-grid" id="ep-grid" aria-hidden="false">
+            <div class="ep-card" tabindex="0" data-episode="1" data-video="PQEFBGobdZM">
+              <div class="ep-card-inner">
+                <div class="ep-front"><strong>Épisode 1</strong><span>La soirée</span></div>
+                <div class="ep-back">
+                  <p class="ep-summary">Brad Bitt se rend à une somptueuse soirée ; un incident inattendu bouleverse sa nuit.</p>
+                  <button class="btn btn-visionner" data-video="PQEFBGobdZM">Voir</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="ep-card" tabindex="0" data-episode="2" data-video="AxQZmL8W_i0">
+              <div class="ep-card-inner">
+                <div class="ep-front"><strong>Épisode 2</strong><span>Ligoté</span></div>
+                <div class="ep-back">
+                  <p class="ep-summary">Brad se réveille ligoté, interrogé par des silhouettes masquées — que cherchent-elles ?</p>
+                  <button class="btn btn-visionner" data-video="AxQZmL8W_i0">Voir</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="ep-card" tabindex="0" data-episode="3" data-video="4YfBA-63uqw">
+              <div class="ep-card-inner">
+                <div class="ep-front"><strong>Épisode 3</strong><span>Retard</span></div>
+                <div class="ep-back">
+                  <p class="ep-summary">Après une chute étrange, Brad découvre un lieu abandonné et une porte menaçante.</p>
+                  <button class="btn btn-visionner" data-video="4YfBA-63uqw">Voir</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD: Music -->
+      <article class="card reveal" id="music">
+        <div class="card-inner">
+          <div class="card-top">
+            <h2>Musiques</h2>
+            <p>Plongez dans l’ambiance musicale du jeu.</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn disabled" aria-disabled="true">Prochainement</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD: Lore -->
+      <article class="card reveal" id="lore">
+        <div class="card-inner">
+          <div class="card-top">
+            <h2>L'histoire de Bitt</h2>
+            <p> Découvrez l’histoire cachée de Bitt.</p>
+          </div>
+          <div class="card-actions">
+           <button class="btn disabled" aria-disabled="true">Prochainement</button>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="left">Version 1.1</div>
+      <div class="right">IMAGINe Studio &amp; Engine HwR</div>
+    </div>
+  </footer>
+
+  <!-- Overlays / panels -->
+  <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="overlay-inner" id="overlay-inner" tabindex="-1" role="document">
+      <button class="close" id="overlay-close" aria-label="Fermer">✕</button>
+      <div id="overlay-content" class="overlay-content" tabindex="0"></div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
