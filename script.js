@@ -1,4 +1,4 @@
-// script.js ��� gestion badge / thèmes / overlays / ep-cards / lecteur vidéo
+// script.js — gestion badge / thèmes / overlays / ep-cards / lecteur vidéo
 document.addEventListener('DOMContentLoaded', () => {
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -257,11 +257,17 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToggle.setAttribute('title', title);
         themeToggle.setAttribute('aria-label', title);
         
-        // show/hide theme mode label
+        // show/hide theme mode label with smooth animation
         const modeLabel = document.getElementById('theme-mode-label');
         if (modeLabel) {
-          modeLabel.style.display = (pref === 'auto') ? 'inline' : 'none';
-          modeLabel.textContent = pref === 'auto' ? 'auto' : '';
+          if (pref === 'auto') {
+            modeLabel.textContent = 'auto';
+            // trigger reflow to enable transition
+            modeLabel.offsetHeight;
+            modeLabel.classList.add('visible');
+          } else {
+            modeLabel.classList.remove('visible');
+          }
         }
       }
 
