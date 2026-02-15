@@ -51,19 +51,30 @@ html,body{
   display: none !important;
 }
 
+/* Theme toggle wrapper */
+.theme-toggle-wrapper{display:flex;flex-direction:column;align-items:center;gap:4px}
+
 /* Theme toggle */
 .theme-toggle{display:inline-flex;align-items:center;gap:8px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);cursor:pointer}
 .theme-toggle svg{opacity:0.45;transition:opacity .18s ease, transform .18s ease}
 .theme-toggle.is-light .icon-sun{opacity:1; transform:scale(1.05)}
 .theme-toggle.is-dark .icon-moon{opacity:1; transform:scale(1.05)}
 
-/* Theme mode label (auto mode only) */
+/* Theme mode label (auto mode only) - vertical display with smooth animation */
 .theme-mode-label{
-  display:none;
   font-size:10px;
   color:var(--muted);
   font-weight:600;
   letter-spacing:0.3px;
+  height:12px;
+  overflow:hidden;
+  transition:opacity .3s ease, height .3s ease;
+  opacity:0;
+}
+
+.theme-mode-label.visible{
+  opacity:1;
+  height:12px;
 }
 
 /* Hero */
