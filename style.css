@@ -52,10 +52,20 @@ html,body{
 }
 
 /* Theme toggle */
-.theme-toggle{display:inline-flex;align-items:center;gap:8px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);cursor:pointer}
+.theme-toggle{display:inline-flex;align-items:center;flex-direction:column;gap:8px;padding:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);cursor:pointer}
 .theme-toggle svg{opacity:0.45;transition:opacity .18s ease, transform .18s ease}
 .theme-toggle.is-light .icon-sun{opacity:1; transform:scale(1.05)}
 .theme-toggle.is-dark .icon-moon{opacity:1; transform:scale(1.05)}
+
+/* Theme mode label (auto mode only) */
+.theme-mode-label{
+  display:none;
+  font-size:10px;
+  color:var(--muted);
+  text-align:center;
+  font-weight:600;
+  letter-spacing:0.3px;
+}
 
 /* Hero */
 .hero{display:flex;flex-direction:column;align-items:flex-start;gap:18px;padding-top:42px;padding-bottom:42px}
@@ -230,7 +240,7 @@ html,body{
 @media (max-width:480px){
   .hero h1{font-size:24px}
   .oval-btn{width:100%;justify-content:center}
-  .logo{width:64px;height:64px}
+  .logo{width:80px;height:80px}
   .oval-btn.large{padding:12px 20px;font-size:15px}
   .ep-card{width:100%;height:140px}
   .ep-grid{flex-direction:column;gap:12px}
