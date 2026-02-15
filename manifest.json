@@ -1,6 +1,6 @@
 {
   "name": "Bbitt, mais le site",
-  "short_name": "Bbitt, mais le site",
+  "short_name": "Brad Bitt",
   "description": "Le site officiel de Brad Bitt avec le jeu, les épisodes et l'univers",
   "start_url": "/",
   "display": "standalone",
@@ -8,9 +8,15 @@
   "theme_color": "#32C0C1",
   "icons": [
     {
-      "src": "images/logo bb site clair.png",
+      "src": "images/favicon.png",
       "sizes": "192x192",
       "type": "image/png"
+    },
+    {
+      "src": "images/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
