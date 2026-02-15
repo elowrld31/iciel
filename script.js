@@ -50,8 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       version: '1.1',
       date: '14-02-2026',
-      teaser: 'Cette mise à jour apporte plusieurs améliorations importantes pour rendre l’expérience plus claire, plus moderne et plus agréable à utiliser.',
-      detailHtml: `<p>Amélioration de la rubrique "Nouveautés", avec un affichage plus clair des versions. Correction du badge « 1 », qui disparaît désormais lorsqu’il est consulté. Ajout d’un bouton "Suivi du jeu" dans la section "Brad Bitt, mais le jeu" pour accéder directement au développement du projet. Optimisation générale de l’interface sur ordinateur.</p>`
+      teaser: 'Cette mise à jour apporte plusieurs améliorations importantes pour rendre l\'expérience plus claire, plus moderne et plus agréable à utiliser.',
+      detailHtml: `<p>Amélioration de la rubrique "Nouveautés", avec un affichage plus clair des versions. Correction du badge « 1 », qui disparaît désormais lorsqu'il est consulté. Ajout d'un bouton "Suivi du jeu" dans la section "Brad Bitt, mais le jeu" pour accéder directement au développement du projet. Optimisation générale de l'interface sur ordinateur.</p>`
     },
     {
       version: '1.0',
@@ -68,15 +68,15 @@ document.addEventListener('DOMContentLoaded', () => {
       <h2>En savoir plus</h2>
       <p>Ce site rassemble tout ce qui gravite autour de Brad Bitt : les expériences interactives, les épisodes, les ambiances sonores et les éléments de récit qui donnent vie à ce monde.</p>
 
-      <p>Vous pouvez y découvrir le futur jeu et son univers, suivre les aventures de Brad à travers de courts épisodes, et explorer peu à peu l’histoire qui se dessine en arrière-plan.</p>
+      <p>Vous pouvez y découvrir le futur jeu et son univers, suivre les aventures de Brad à travers de courts épisodes, et explorer peu à peu l'histoire qui se dessine en arrière-plan.</p>
 
-      <p>Certains contenus sont déjà accessibles, d’autres arriveront progressivement. L’idée est simple : offrir un point d’entrée clair pour explorer, comprendre et suivre l’évolution du projet.</p>
+      <p>Certains contenus sont déjà accessibles, d'autres arriveront progressivement. L'idée est simple : offrir un point d'entrée clair pour explorer, comprendre et suivre l'évolution du projet.</p>
 
       <p>Utilisez les boutons « Découvrir » et « Voir » pour naviguer librement entre les contenus.</p>
     `,
     news: `
       <h2>Nouveautés</h2>
-      <p>C’est ici que vous trouverez les dernières mises à jour du site et des contenus ajoutés récemment.</p>
+      <p>C'est ici que vous trouverez les dernières mises à jour du site et des contenus ajoutés récemment.</p>
     `,
     game: `
       <h2>Brad Bitt — Le jeu</h2>
@@ -250,6 +250,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = pref === 'auto' ? 'Mode : automatique' : (pref === 'light' ? 'Mode : clair' : 'Mode : sombre');
         themeToggle.setAttribute('title', title);
         themeToggle.setAttribute('aria-label', title);
+        
+        // show/hide theme mode label
+        const modeLabel = document.getElementById('theme-mode-label');
+        if (modeLabel) {
+          modeLabel.style.display = (pref === 'auto') ? 'block' : 'none';
+          modeLabel.textContent = pref === 'auto' ? 'auto' : '';
+        }
       }
 
       // update logo according to mapping requested
@@ -286,6 +293,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   })();
 
+  /* --- Auto-flip first episode card on load --- */
+  (function autoFlipFirstCard() {
+    const firstCard = document.querySelector('.ep-card');
+    if (!firstCard) return;
+    
+    // wait for reveal animation to complete, then flip once
+    setTimeout(() => {
+      firstCard.classList.add('flipped');
+      // Remove after animation completes to prevent re-flipping
+      setTimeout(() => {
+        firstCard.classList.remove('flipped');
+      }, 600); // matches .ep-card-inner transition duration
+    }, 500); // delay to let reveal finish
+  })();
+
   // News button handlers (badge / open panel)
   if (newsBtn) {
     newsBtn.addEventListener('click', () => {
@@ -296,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (newsBadge) {
     newsBadge.addEventListener('click', (e) => {
       e.stopPropagation();
+      e.preventDefault();
       markNewsRead();
     });
   }
