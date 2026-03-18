@@ -8,13 +8,14 @@
   "theme_color": "#32C0C1",
   "icons": [
     {
-      "src": "images/logo bb site clair.png",
+      "src": "web-app-manifest-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "images/logo bb site clair.png",
-      "sizes": "180x180",
+      "src": "web-app-manifest-512x512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
