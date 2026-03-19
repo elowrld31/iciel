@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const THEME_KEY = 'brad_theme_pref';
 
   // ← Incrémente cette valeur à chaque nouvelle MàJ pour réafficher le badge
-  const NEWS_VERSION = '1.2';
+  const NEWS_VERSION = '1.3';
   const NEWS_SEEN_KEY = 'brad_news_seen_v';
 
   /* NEWS badge logic */
