@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const NEWS_HISTORY = [
     {
       version: '1.2',
-      date: '04-04-2026',
+      date: '21-03-2026',
       teaser: 'Cette mise à jour améliore l\'expérience générale du site avec des ajustements visuels et interactifs pensés pour une navigation plus naturelle et plus lisible.',
       detailHtml: `<p>Le mode de thème affiche désormais l'indication « auto » lors de la première visite ou lorsqu'il est actif. L'interface mobile a été optimisée avec un logo mieux adapté aux téléphones, et une animation met en évidence l'interactivité des cartes. Le comportement du badge de "nouveautés" a également été corrigé pour une utilisation plus intuitive. Enfin, le site dispose maintenant d'une icône dédiée lors de l'ajout en favori ou sur l'écran d'accueil.</p>`
     },
